@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="student/template/head::head"></head>
+
+<body>
+
+	<!-- Navigation -->
+	<nav th:replace="student/template/nav::nav"></nav>
+	<header th:replace="student/template/header::header"></header>
+	<!-- Page Content -->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<div th:replace="student/template/sidebar::sidebar"></div>
+			</div>
+			<!-- Post Content Column -->
+			<div class="col-lg-8">
+
+				<div class="card my-2">
+					<h5 class="card-header">Các chuẩn đầu ra chương trình đào tạo</h5>
+				</div>
+
+				<div class="card my-2">
+					<table class="table table-hover table-bordered bg-white">
+						<thead class="thead-light">
+							<tr>
+								<th scope="col">STT</th>
+								<th scope="col">Kí hiệu</th>
+								<th scope="col">Tên chuẩn</th>
+								<th scope="col">Tỉ lệ hoàn thành</th>
+								<th scope="col">Đánh giá</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="lo ,itrStat : ${listLO}"  th:classappend="${lo.percent < 50}? 'chuadat' : 'dat' ">
+
+								<td scope="col" th:text="${itrStat.index + 1}">1</td>
+								<td scope="col" th:text="${lo.learningoutcome.kiHieu}">Kí hiệu</td>
+								<td scope="col" th:text="${lo.learningoutcome.tenChuanDauRa}">Tên chuẩn</td>
+								<td scope="col" th:if="${lo.percent != null}" th:text="${lo.percent + '%'}">Tỉ lệ</td>
+								<td scope="col" th:text="${lo.evaluate}">Đánh giá</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+		</div>
+		<!-- /.row -->
+
+	</div>
+	<!-- /.container -->
+
+	<!-- Footer -->
+	<footer>
+		<div th:replace="student/template/footer::footer"></div>
+	</footer>
+
+
+</body>
+
+</html>

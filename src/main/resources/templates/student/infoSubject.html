@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="student/template/head::head"></head>
+
+<body>
+
+	<!-- Navigation -->
+	<nav th:replace="student/template/nav::nav"></nav>
+	<header th:replace="student/template/header::header"></header>
+	<!-- Page Content -->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<div th:replace="student/template/sidebar::sidebar"></div>
+			</div>
+			<!-- Post Content Column -->
+			<div class="col-lg-8">
+
+				<div class="card my-2">
+					<h5 class="card-header">Các chuẩn môn học</h5>
+				</div>
+
+				<div class="my-2">
+					<table class="table table-hover table-bordered">
+						<thead class="thead-light">
+							<tr>
+								<th scope="col">STT</th>
+								<th scope="col">Kí hiêu</th>
+								<th scope="col">Tên chuẩn</th>
+								<th scope="col">Kết quả</th>
+								<th>Đánh giá</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="usg, itrStat : ${userSubjectCoursesGoal}"
+								th:classappend="${usg.percent < 50.0} ? 'chuadat' : 'dat' ">
+								<td th:text="${itrStat.index + 1}"></td>
+								<td th:text="${usg.coursesgoal.sign}"></td>
+								<td th:text="${usg.coursesgoal.nameCoursesGoal}"></td>
+								<td th:text="${usg.percent + '%' }"></td>
+								<td th:text="${usg.evaluate}"></td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+
+
+			</div>
+		</div>
+
+	</div>
+	<!-- /.row -->
+
+	<!-- /.container -->
+
+	<!-- Footer -->
+	<footer>
+		<div th:replace="student/template/footer::footer"></div>
+	</footer>
+
+
+</body>
+
+</html>
