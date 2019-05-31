@@ -27,129 +27,186 @@ import com.javawebspringboot.education.utiles.TableScore;
 @Transactional
 public class SubjectServiceImpl implements SubjectService {
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+	@Autowired
+	private SubjectRepository subjectRepository;
 
-    
+	@Override
+	public boolean fileHandler(MultipartFile fileExcel) throws ReadFileException {
+		Workbook workbook;
+		List<TableScore> listTableScore = new ArrayList<TableScore>();
 
-    @Override
-    public boolean fileHandler(MultipartFile fileExcel) throws ReadFileException {
-        Workbook workbook;
-        List<TableScore> listTableScore = new ArrayList<TableScore>();
+		String lowerCaseFileName = fileExcel.getOriginalFilename().toLowerCase();
+		if (lowerCaseFileName.endsWith(".xlsx")) {
+			try {
+				workbook = new XSSFWorkbook(fileExcel.getInputStream());
+				Sheet sheet = workbook.getSheetAt(0);
 
-        String lowerCaseFileName = fileExcel.getOriginalFilename().toLowerCase();
-        if (lowerCaseFileName.endsWith(".xlsx")) {
-            try {
-                workbook = new XSSFWorkbook(fileExcel.getInputStream());
-                Sheet sheet = workbook.getSheetAt(0);
+				Iterator<Row> rowIterator = sheet.iterator();
+				if (rowIterator.hasNext()) {
+					// bo qua dong dau tien trong bang
+					// title cua bang
+					rowIterator.next();
+					// bat dau duyet tu dong thu 2 de lay du lieu
+					while (rowIterator.hasNext()) {
+						Row row = rowIterator.next();
+						Iterator<Cell> cellIterator = row.cellIterator();
+						// tao ra moi doi tuong TableScore de luu tung row
 
-                Iterator<Row> rowIterator = sheet.iterator();
-                if (rowIterator.hasNext()) {
-                    // bo qua dong dau tien trong bang
-                    // title cua bang
-                    rowIterator.next();
-                    // bat dau duyet tu dong thu 2 de lay du lieu
-                    while (rowIterator.hasNext()) {
-                        Row row = rowIterator.next();
-                        Iterator<Cell> cellIterator = row.cellIterator();
-                        // tao ra moi doi tuong TableScore de luu tung row
+						TableScore tableScore = new TableScore();
+						List<Float> diems = new ArrayList<Float>();
 
-                        TableScore tableScore = new TableScore();
-                        List<Float> diems = new ArrayList<Float>();
+						while (cellIterator.hasNext()) {
+							Cell cell = cellIterator.next();
+							int columnIndex = cell.getColumnIndex();
 
-                        while (cellIterator.hasNext()) {
-                            Cell cell = cellIterator.next();
-                            int columnIndex = cell.getColumnIndex();
+							// STT trong bang
+							if (columnIndex == 0) {
+								// bo qua khong lam gi het
+							}
 
-                            // STT trong bang
-                            if (columnIndex == 0) {
-                                // bo qua khong lam gi het
-                            }
+							// ma so sinh vien
+							if (columnIndex == 1) {
+								String mssv = cell.getStringCellValue();
+								tableScore.setMaSV(mssv);
+							}
 
-                            // ma so sinh vien
-                            if (columnIndex == 1) {
-                                String mssv = cell.getStringCellValue();
-                                tableScore.setMaSV(mssv);
-                            }
+							// ho ten sinh vien
+							if (columnIndex == 2) {
+								String hoTen = cell.getStringCellValue();
+								tableScore.setTenSV(hoTen);
+							}
+							if (columnIndex > 2) {
+								if (cell.getCellType() == Cell.CELL_TYPE_STRING || cell.getNumericCellValue() > 10
+										|| cell.getNumericCellValue() < 0) {
 
-                            // ho ten sinh vien
-                            if (columnIndex == 2) {
-                                String hoTen = cell.getStringCellValue();
-                                tableScore.setTenSV(hoTen);
-                            }
-                            if (columnIndex > 2) {
-                                if (cell.getCellType() == Cell.CELL_TYPE_STRING || cell.getNumericCellValue() > 10 || cell.getNumericCellValue() < 0) {
+									String msg = getErrorMsg(row);
+									ReadFileException.messageError(msg);
+									throw new ReadFileException();
+								}
 
-                                    String msg = getErrorMsg(row);
-                                    ReadFileException.messageError(msg);
-                                    throw new ReadFileException();
-                                }
+								double diem = cell.getNumericCellValue();
+								float d = (float) diem;
+								diems.add(d);
 
-                                double diem = cell.getNumericCellValue();
-                                float d = (float) diem;
-                                diems.add(d);
+							}
+						}
+						tableScore.setDsDiem(diems);
+						listTableScore.add(tableScore);
 
-                            }
-                        }
-                        tableScore.setDsDiem(diems);
-                        listTableScore.add(tableScore);
+					}
+				}
 
-                    }
-                }
+			} catch (IOException e) {
 
-            } catch (IOException e) {
+				return false;
+			}
+		} else if (lowerCaseFileName.endsWith(".xls")) {
+			try {
+				workbook = new HSSFWorkbook(fileExcel.getInputStream());
+				Sheet sheet = workbook.getSheetAt(0);
 
-                return false;
-            }
-        } else {
-            try {
-                workbook = new HSSFWorkbook(fileExcel.getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+				Iterator<Row> rowIterator = sheet.iterator();
+				if (rowIterator.hasNext()) {
+					// bo qua dong dau tien trong bang
+					// title cua bang
+					rowIterator.next();
+					// bat dau duyet tu dong thu 2 de lay du lieu
+					while (rowIterator.hasNext()) {
+						Row row = rowIterator.next();
+						Iterator<Cell> cellIterator = row.cellIterator();
+						// tao ra moi doi tuong TableScore de luu tung row
 
-        for (TableScore tableScore : listTableScore) {
-            System.out.print("Ma so sv: " + tableScore.getMaSV() + " ten sv: " + tableScore.getTenSV());
-            for (Float diem : tableScore.getDsDiem()) {
-                System.out.print(" cot diem: " + diem);
-            }
-            System.out.println("");
+						TableScore tableScore = new TableScore();
+						List<Float> diems = new ArrayList<Float>();
 
-        }
+						while (cellIterator.hasNext()) {
+							Cell cell = cellIterator.next();
+							int columnIndex = cell.getColumnIndex();
 
-        return true;
-    }
+							// STT trong bang
+							if (columnIndex == 0) {
+								// bo qua khong lam gi het
+							}
 
-    @Override
-    public Subject findByIdSubject(Integer idSubject) {
+							// ma so sinh vien
+							if (columnIndex == 1) {
+								String mssv = cell.getStringCellValue();
+								tableScore.setMaSV(mssv);
+							}
 
-        return subjectRepository.findByIdSubject(idSubject);
-    }
+							// ho ten sinh vien
+							if (columnIndex == 2) {
+								String hoTen = cell.getStringCellValue();
+								tableScore.setTenSV(hoTen);
+							}
+							if (columnIndex > 2) {
+								if (cell.getCellType() == Cell.CELL_TYPE_STRING || cell.getNumericCellValue() > 10
+										|| cell.getNumericCellValue() < 0) {
 
-    private String getErrorMsg(Row row) {
+									String msg = getErrorMsg(row);
+									ReadFileException.messageError(msg);
+									throw new ReadFileException();
+								}
 
-        String strError = "";
-        Iterator<Cell> cellIterator1 = row.cellIterator();
-        while (cellIterator1.hasNext()) {
+								double diem = cell.getNumericCellValue();
+								float d = (float) diem;
+								diems.add(d);
 
-            Cell c = cellIterator1.next();
-            if (c.getCellType() == Cell.CELL_TYPE_STRING) {
-                String value = c.getStringCellValue();
-                strError += value + " ";
-            }
-            if (c.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                double val = c.getNumericCellValue();
-                if (c.getColumnIndex() == 0) {
-                    strError += (int) val + " ";
-                    continue;
-                }
-                strError += String.valueOf(val) + " ";
+							}
+						}
+						tableScore.setDsDiem(diems);
+						listTableScore.add(tableScore);
 
-            }
-        }
-        return strError;
+					}
+				}
 
-    }
+			} catch (IOException e) {
+
+				return false;
+			}
+		}
+
+		for (TableScore tableScore : listTableScore) {
+			System.out.print("Ma so sv: " + tableScore.getMaSV() + " ten sv: " + tableScore.getTenSV());
+			for (Float diem : tableScore.getDsDiem()) {
+				System.out.print(" cot diem: " + diem);
+			}
+			System.out.println("");
+
+		}
+
+		return true;
+	}
+
+	@Override
+	public Subject findByIdSubject(Integer idSubject) {
+
+		return subjectRepository.findByIdSubject(idSubject);
+	}
+
+	private String getErrorMsg(Row row) {
+
+		String strError = "";
+		Iterator<Cell> cellIterator1 = row.cellIterator();
+		while (cellIterator1.hasNext()) {
+
+			Cell c = cellIterator1.next();
+			if (c.getCellType() == Cell.CELL_TYPE_STRING) {
+				String value = c.getStringCellValue();
+				strError += value + " ";
+			}
+			if (c.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+				double val = c.getNumericCellValue();
+				if (c.getColumnIndex() == 0) {
+					strError += (int) val + " ";
+					continue;
+				}
+				strError += String.valueOf(val) + " ";
+
+			}
+		}
+		return strError;
+
+	}
 
 }

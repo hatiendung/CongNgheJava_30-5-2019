@@ -64,7 +64,7 @@ public class LecturerController {
 
 		}
 
-		return "doc";
+		return "redirect:/lecturer/";
 	}
 
 }
