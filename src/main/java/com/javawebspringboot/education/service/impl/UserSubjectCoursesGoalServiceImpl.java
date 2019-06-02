@@ -27,4 +27,9 @@ public class UserSubjectCoursesGoalServiceImpl implements UserSubjectCoursesGoal
 
 	}
 
+	@Override
+	public List<UserSubjectCoursesGoal> findByUserAndSubjectOrderByCoursesgoalAsc(User user, Subject subject) {
+		return userSubjectCoursesGoalRepository.findByUserAndSubjectOrderByCoursesgoalAsc(user, subject);
+	}
+
 }

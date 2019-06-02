@@ -18,5 +18,7 @@ public interface ScoresRepository extends JpaRepository<Scores, Integer> {
 	List<Scores> findByUser(User user);
 	
 	List<Scores> findByMonhoc(Subject monhoc);
+	
+	Scores findByUserAndMonhoc(User user, Subject monhoc);
 
 }

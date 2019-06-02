@@ -20,146 +20,149 @@ import javax.persistence.Table;
 
 public class Subject implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @Column(name = "id_monhoc")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idSubject;
+	@Id
+	@Column(name = "id_monhoc")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idSubject;
 
-    @Column(name = "ten_monhoc")
-    private String nameSubject;
+	@Column(name = "ten_monhoc")
+	private String nameSubject;
 
-    @Column(name = "code_subject")
-    private String codeSubject;
+	@Column(name = "code_subject")
+	private String codeSubject;
 
-    @Column(name = "tg_batdau")
-    private Date startTime;
+	@Column(name = "tg_batdau")
+	private Date startTime;
 
-    @Column(name = "tg_ketthuc")
-    private Date finishTime;
+	@Column(name = "tg_ketthuc")
+	private Date finishTime;
 
-    @Column(name = "so_tin_chi")
-    private Integer numberOfCredits;
+	@Column(name = "so_tin_chi")
+	private Integer numberOfCredits;
 
-    @ManyToMany(mappedBy = "subjects")
-    private List<User> users;
+	@ManyToMany(mappedBy = "subjects")
+	private List<User> users;
 
-    @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
-    private List<CoursesGoal> coursesGoals;
+	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
+	private List<CoursesGoal> coursesGoals;
 
-    @OneToMany(mappedBy = "monhoc", fetch = FetchType.LAZY)
-    private List<Scores> scoresList;
+	@OneToMany(mappedBy = "monhoc", fetch = FetchType.LAZY)
+	private List<Scores> scoresList;
 
-    @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
-    private List<TestSubject> subjects;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "subject", fetch = FetchType.LAZY)
+	private List<UserSubjectCoursesGoal> userSubjectCoursesgoalList;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "subject", fetch = FetchType.LAZY)
-    private List<UserSubjectCoursesGoal> userSubjectCoursesgoalList;
+	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
+	private List<Answer> answerList;
 
-    public Subject() {
-        super();
-    }
+	public Subject() {
+		super();
+	}
 
-    public Subject(String nameSubject, String codeSubject, Date startTime, Date finishTime, Integer numberOfCredits, List<User> users, List<CoursesGoal> coursesGoals, List<Scores> scoresList, List<TestSubject> subjects, List<UserSubjectCoursesGoal> userSubjectCoursesgoalList) {
-        this.nameSubject = nameSubject;
-        this.codeSubject = codeSubject;
-        this.startTime = startTime;
-        this.finishTime = finishTime;
-        this.numberOfCredits = numberOfCredits;
-        this.users = users;
-        this.coursesGoals = coursesGoals;
-        this.scoresList = scoresList;
-        this.subjects = subjects;
-        this.userSubjectCoursesgoalList = userSubjectCoursesgoalList;
-    }
+	public Subject(String nameSubject, String codeSubject, Date startTime, Date finishTime, Integer numberOfCredits,
+			List<User> users, List<CoursesGoal> coursesGoals, List<Scores> scoresList,
+			List<UserSubjectCoursesGoal> userSubjectCoursesgoalList, List<Answer> answerList) {
+		super();
+		this.nameSubject = nameSubject;
+		this.codeSubject = codeSubject;
+		this.startTime = startTime;
+		this.finishTime = finishTime;
+		this.numberOfCredits = numberOfCredits;
+		this.users = users;
+		this.coursesGoals = coursesGoals;
+		this.scoresList = scoresList;
+		this.userSubjectCoursesgoalList = userSubjectCoursesgoalList;
+		this.answerList = answerList;
+	}
 
-    public Integer getIdSubject() {
-        return idSubject;
-    }
+	public List<Answer> getAnswerList() {
+		return answerList;
+	}
 
-    public void setIdSubject(Integer idSubject) {
-        this.idSubject = idSubject;
-    }
+	public void setAnswerList(List<Answer> answerList) {
+		this.answerList = answerList;
+	}
 
-    public String getNameSubject() {
-        return nameSubject;
-    }
+	public Integer getIdSubject() {
+		return idSubject;
+	}
 
-    public void setNameSubject(String nameSubject) {
-        this.nameSubject = nameSubject;
-    }
+	public void setIdSubject(Integer idSubject) {
+		this.idSubject = idSubject;
+	}
 
-    public String getCodeSubject() {
-        return codeSubject;
-    }
+	public String getNameSubject() {
+		return nameSubject;
+	}
 
-    public void setCodeSubject(String codeSubject) {
-        this.codeSubject = codeSubject;
-    }
+	public void setNameSubject(String nameSubject) {
+		this.nameSubject = nameSubject;
+	}
 
-    public Date getStartTime() {
-        return startTime;
-    }
+	public String getCodeSubject() {
+		return codeSubject;
+	}
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
+	public void setCodeSubject(String codeSubject) {
+		this.codeSubject = codeSubject;
+	}
 
-    public Date getFinishTime() {
-        return finishTime;
-    }
+	public Date getStartTime() {
+		return startTime;
+	}
 
-    public void setFinishTime(Date finishTime) {
-        this.finishTime = finishTime;
-    }
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
 
-    public Integer getNumberOfCredits() {
-        return numberOfCredits;
-    }
+	public Date getFinishTime() {
+		return finishTime;
+	}
 
-    public void setNumberOfCredits(Integer numberOfCredits) {
-        this.numberOfCredits = numberOfCredits;
-    }
+	public void setFinishTime(Date finishTime) {
+		this.finishTime = finishTime;
+	}
 
-    public List<User> getUsers() {
-        return users;
-    }
+	public Integer getNumberOfCredits() {
+		return numberOfCredits;
+	}
 
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
+	public void setNumberOfCredits(Integer numberOfCredits) {
+		this.numberOfCredits = numberOfCredits;
+	}
 
-    public List<CoursesGoal> getCoursesGoals() {
-        return coursesGoals;
-    }
+	public List<User> getUsers() {
+		return users;
+	}
 
-    public void setCoursesGoals(List<CoursesGoal> coursesGoals) {
-        this.coursesGoals = coursesGoals;
-    }
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
 
-    public List<Scores> getScoresList() {
-        return scoresList;
-    }
+	public List<CoursesGoal> getCoursesGoals() {
+		return coursesGoals;
+	}
 
-    public void setScoresList(List<Scores> scoresList) {
-        this.scoresList = scoresList;
-    }
+	public void setCoursesGoals(List<CoursesGoal> coursesGoals) {
+		this.coursesGoals = coursesGoals;
+	}
 
-    public List<TestSubject> getSubjects() {
-        return subjects;
-    }
+	public List<Scores> getScoresList() {
+		return scoresList;
+	}
 
-    public void setSubjects(List<TestSubject> subjects) {
-        this.subjects = subjects;
-    }
+	public void setScoresList(List<Scores> scoresList) {
+		this.scoresList = scoresList;
+	}
 
-    public List<UserSubjectCoursesGoal> getUserSubjectCoursesgoalList() {
-        return userSubjectCoursesgoalList;
-    }
+	public List<UserSubjectCoursesGoal> getUserSubjectCoursesgoalList() {
+		return userSubjectCoursesgoalList;
+	}
 
-    public void setUserSubjectCoursesgoalList(List<UserSubjectCoursesGoal> userSubjectCoursesgoalList) {
-        this.userSubjectCoursesgoalList = userSubjectCoursesgoalList;
-    }
+	public void setUserSubjectCoursesgoalList(List<UserSubjectCoursesGoal> userSubjectCoursesgoalList) {
+		this.userSubjectCoursesgoalList = userSubjectCoursesgoalList;
+	}
 
 }

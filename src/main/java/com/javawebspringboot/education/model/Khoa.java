@@ -23,7 +23,6 @@ public class Khoa implements Serializable {
 	private Integer idKhoa;
 
 	@Column(name = "tenkhoa")
-
 	private String tenKhoa;
 
 	@OneToMany(mappedBy = "khoa")

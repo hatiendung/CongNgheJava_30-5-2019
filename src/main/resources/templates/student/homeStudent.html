@@ -3,6 +3,7 @@
 
 <head th:replace="student/template/head::head"></head>
 
+
 <body>
 
 	<!-- Navigation -->
@@ -22,7 +23,7 @@
 				</div>
 
 				<div class="card my-2" th:each="subject : ${user.subjects}">
-					<div class="card-body card_body_monhoc"  style="padding: 12px 20px;">
+					<div class="card-body card_body_monhoc" style="padding: 12px 20px;">
 						<h4 style="font-size: 18px;">
 							<a th:href="@{/chuan-mon-hoc/subject/} + ${subject.idSubject}"
 								th:text="${subject.nameSubject}">Tối ưu hóa công cụ tìm kiếm

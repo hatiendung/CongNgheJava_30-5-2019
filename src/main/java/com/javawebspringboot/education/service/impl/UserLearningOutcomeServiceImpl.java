@@ -11,6 +11,7 @@ import com.javawebspringboot.education.model.User;
 import com.javawebspringboot.education.model.UserLearningOutcome;
 import com.javawebspringboot.education.repository.UserLearningOutcomeRepository;
 import com.javawebspringboot.education.service.UserLearningOutcomeService;
+import com.javawebspringboot.education.utiles.TableScore;
 
 @Service
 @Transactional
@@ -23,8 +24,10 @@ public class UserLearningOutcomeServiceImpl implements UserLearningOutcomeServic
 	public List<UserLearningOutcome> findByUser(User user) {
 		return userLearningOutcomeRepository.findByUser(user);
 	}
-	
-	
-	
+
+	@Override
+	public void updateLearningOutcome(List<TableScore> lisTableScores) {
+		
+	}
 
 }

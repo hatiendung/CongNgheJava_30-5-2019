@@ -25,25 +25,42 @@
 					<table class="table table-hover table-bordered">
 						<thead class="thead-light">
 							<tr>
-								<th scope="col">STT</th>
-								<th scope="col">Môn học</th>
-								<th scope="col">Điểm quá trình</th>
-								<th scope="col">Điểm giữa kì</th>
-								<th scope="col">Điểm cuối kì</th>
-								<th scope="col">Điểm trung bình</th>
+								<th>STT</th>
+								<th>Môn học</th>
+								<th>Điểm quá trình</th>
+								<th>Điểm Thực hành</th>
+								<th>Điểm giữa kì</th>
+								<th>Điểm cuối kì</th>
+								<th>Điểm trung bình</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="score, itrStat : ${scoresTable}"
-								th:classappend="${score.diemTb < 5.0} ? 'chuadat' : 'dat' ">
+								th:classappend="${score.diemTb < 5.0 } ? 'chuadat' : 'dat' ">
 
-								<td th:text="${itrStat.index + 1}" scope="col">1</td>
-								<td th:text="${score.monhoc.nameSubject}" scope="col">Môn
-									học</td>
-								<td th:text="${score.diemQt}" scope="col">Điểm quá trình</td>
-								<td th:text="${score.diemTh}" scope="col">Điểm giữa kì</td>
-								<td th:text="${score.diemCk}" scope="col">Điểm cuối kì</td>
-								<td th:text="${score.diemTb}" scope="col">Điểm trung bình</td>
+								<td th:text="${itrStat.index + 1}">1</td>
+								<td th:text="${score.monhoc.nameSubject} ">Môn học</td>
+
+
+								<td th:text="${score.diemQt}">Điểm quá trình</td>
+								<td th:text="${score.diemTh}">Điểm Thực hành</td>
+								<td th:text="${score.diemGk}">Điểm giữa kì</td>
+								<td th:text="${score.diemCk}">Điểm cuối kì</td>
+								<td th:text="${score.diemTb}">Điểm trung bình</td>
+
+
+
+
+								<!-- <td th:text="${score.diemQt !=null} ? ${score.diemQt} : 'null' ">Điểm
+									quá trình</td>
+								<td th:text="${score.diemTh !=null} ? ${score.diemTh} : 'null' ">Điểm
+									Thực hành</td>
+								<td th:text="${score.diemGk !=null} ? ${score.diemGk} : 'null' ">Điểm
+									giữa kì</td>
+								<td th:text="${score.diemCk !=null} ? ${score.diemCk} : 'null' ">Điểm
+									cuối kì</td>
+								<td th:text="${score.diemTb !=null} ? ${score.diemTb} : 'null' ">Điểm
+									trung bình</td> -->
 							</tr>
 
 						</tbody>

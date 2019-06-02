@@ -3,6 +3,11 @@
 
 <head th:replace="student/template/head::head"></head>
 
+<head>
+	<script th:src="@{/student/js/chart.js}"></script>
+
+</head>
+
 <body>
 
 	<!-- Navigation -->
@@ -45,6 +50,40 @@
 						</tbody>
 					</table>
 				</div>
+
+				<div class="card my-2">
+					<h5 class="card-header">Bieu do</h5>
+				</div>
+
+
+
+				<div class="my-2">
+					<canvas id="ChartDemo" style="background: white;"></canvas>
+					<script type="text/javascript" th:inline="javascript">
+						/*<![CDATA[*/
+						var ctx = document.getElementById("ChartDemo").getContext('2d');
+						var ChartDemo = new Chart(ctx, {
+							type: 'bar',
+							data: {
+								labels: /*[[ ${label} ]]*/,
+								datasets: [
+									{
+										label: "Chart-1",
+										borderColor: 'rgb(255, 0, 4)',
+										lineTension: 0,
+										fill: false,
+										data: /*[[ ${point} ]]*/,
+									},
+								]
+							},
+							options: {
+								responsive: true,
+							}
+						});
+   					 /*]]>*/
+					</script>
+				</div>
+
 
 
 			</div>

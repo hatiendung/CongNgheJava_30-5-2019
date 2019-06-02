@@ -1,5 +1,8 @@
 package com.javawebspringboot.education.controller.student;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.javawebspringboot.education.model.Subject;
 import com.javawebspringboot.education.model.User;
+import com.javawebspringboot.education.model.UserSubjectCoursesGoal;
 import com.javawebspringboot.education.service.ScoresService;
 import com.javawebspringboot.education.service.SubjectService;
 import com.javawebspringboot.education.service.UserService;
@@ -45,8 +49,21 @@ public class StudentHomeController {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		User user = userServiece.findByUsername(userDetails.getUsername());
 
+		model.addAttribute("userSubjectCoursesGoal",
+				userSubjectCoursesGoalService.findByUserAndSubjectOrderByCoursesgoalAsc(user, subject));
+		List<UserSubjectCoursesGoal> list = userSubjectCoursesGoalService
+				.findByUserAndSubjectOrderByCoursesgoalAsc(user, subject);
 
-		model.addAttribute("userSubjectCoursesGoal", userSubjectCoursesGoalService.findByUserAndSubject(user, subject));
+		List<String> label = new ArrayList<String>();
+		List<Float> point = new ArrayList<Float>();
+		for (UserSubjectCoursesGoal userSubjectCoursesGoal : list) {
+			label.add(userSubjectCoursesGoal.getCoursesgoal().getSign());
+			point.add(userSubjectCoursesGoal.getPercent());
+		}
+
+		model.addAttribute("label", label);
+		model.addAttribute("point", point);
+
 		return "student/infoSubject";
 	}
 

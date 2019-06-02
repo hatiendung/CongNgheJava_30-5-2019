@@ -10,16 +10,12 @@ import com.javawebspringboot.education.model.Subject;
 import com.javawebspringboot.education.model.User;
 import com.javawebspringboot.education.model.UserSubjectCoursesGoal;
 
-
 @Repository
 @Transactional
 public interface UserSubjectCoursesGoalRepository extends JpaRepository<UserSubjectCoursesGoal, Integer> {
 
-	
-	
 	List<UserSubjectCoursesGoal> findByUserAndSubject(User user, Subject subject);
-	
-	
-	
+	List<UserSubjectCoursesGoal> findByUserAndSubjectOrderByCoursesgoalAsc(User user, Subject subject);
+
 
 }

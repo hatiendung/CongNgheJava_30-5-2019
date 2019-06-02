@@ -1,5 +1,8 @@
 package com.javawebspringboot.education.controller.lecturer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +18,9 @@ import com.javawebspringboot.education.model.Subject;
 import com.javawebspringboot.education.model.User;
 import com.javawebspringboot.education.service.ScoresService;
 import com.javawebspringboot.education.service.SubjectService;
+import com.javawebspringboot.education.service.UserLearningOutcomeService;
 import com.javawebspringboot.education.service.UserService;
+import com.javawebspringboot.education.utiles.TableScore;
 
 @Controller
 public class LecturerController {
@@ -28,6 +33,10 @@ public class LecturerController {
 
 	@Autowired
 	private ScoresService scoreService;
+	
+	@Autowired
+	private UserLearningOutcomeService userLearningOutcomeService;
+
 
 	@RequestMapping("/lecturer/")
 	public String studentHomePage(Model model) {
@@ -44,6 +53,7 @@ public class LecturerController {
 		model.addAttribute("subject", subject);
 		model.addAttribute("subjectScore", scoreService.findBySubject(subject));
 
+		
 		if (ReadFileException.getMsgError() != "") {
 			model.addAttribute("status", new ReadFileException().getMessage());
 			ReadFileException.setMsgError("");
@@ -52,16 +62,26 @@ public class LecturerController {
 		return "lecturer/subject";
 	}
 
-	@RequestMapping(value = "/lecturer/subject/{idSubject}/upload/{kiThi}")
-	// @ResponseBody
+	@RequestMapping(value = "/lecturer/subject/{idSubject}/upload/{cotDiem}")
 	public String readFileExcel(@PathVariable(name = "idSubject") Integer idSubject,
-			@PathVariable(name = "kiThi") String kiThi, @RequestParam(name = "fileExcel") MultipartFile fileExcel) {
+			@PathVariable(name = "cotDiem") String cotDiem, @RequestParam(name = "fileExcel") MultipartFile fileExcel) {
 
+		List<TableScore> lisTableScores = null;
 		try {
-			subjectService.fileHandler(fileExcel);
+			lisTableScores = new ArrayList<>();
+			lisTableScores = subjectService.fileHandler(fileExcel);
 		} catch (ReadFileException ex) {
 			return "redirect:/lecturer/subject/{idSubject}";
+		}
 
+		// file excel khong bi loi
+		// xu li file
+		if (lisTableScores != null) {
+			subjectService.readData(lisTableScores, idSubject, cotDiem);
+			
+			// xu li them cac G xong tu file excel thi ta phai update cac LO ngay sau do
+			userLearningOutcomeService.updateLearningOutcome(lisTableScores);
+			
 		}
 
 		return "redirect:/lecturer/";
