@@ -20,9 +20,6 @@ import javax.persistence.Table;
 @Table(name = "coursegoal")
 public class CoursesGoal implements Serializable {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -46,18 +43,31 @@ public class CoursesGoal implements Serializable {
 	@ManyToMany(mappedBy = "coursesGoalList", fetch = FetchType.LAZY)
 	private List<Answer> answerList;
 
+	@ManyToMany(mappedBy = "coursesGoalsList", fetch = FetchType.LAZY)
+	private List<LearningOutcome> learningOutcomeList;
+
 	public CoursesGoal() {
 		super();
 	}
 
 	public CoursesGoal(String sign, String nameCoursesGoal, Subject subject,
-			List<UserSubjectCoursesGoal> userSubjectCoursesgoalList, List<Answer> answerList) {
+			List<UserSubjectCoursesGoal> userSubjectCoursesgoalList, List<Answer> answerList,
+			List<LearningOutcome> learningOutcomeList) {
 		super();
 		this.sign = sign;
 		this.nameCoursesGoal = nameCoursesGoal;
 		this.subject = subject;
 		this.userSubjectCoursesgoalList = userSubjectCoursesgoalList;
 		this.answerList = answerList;
+		this.learningOutcomeList = learningOutcomeList;
+	}
+
+	public List<LearningOutcome> getLearningOutcomeList() {
+		return learningOutcomeList;
+	}
+
+	public void setLearningOutcomeList(List<LearningOutcome> learningOutcomeList) {
+		this.learningOutcomeList = learningOutcomeList;
 	}
 
 	public List<Answer> getAnswerList() {

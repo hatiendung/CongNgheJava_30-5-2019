@@ -25,66 +25,63 @@ import com.javawebspringboot.education.utiles.TableScore;
 @Controller
 public class LecturerController {
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private SubjectService subjectService;
+    @Autowired
+    private SubjectService subjectService;
 
-	@Autowired
-	private ScoresService scoreService;
-	
-	@Autowired
-	private UserLearningOutcomeService userLearningOutcomeService;
+    @Autowired
+    private ScoresService scoreService;
 
+    @Autowired
+    private UserLearningOutcomeService userLearningOutcomeService;
 
-	@RequestMapping("/lecturer/")
-	public String studentHomePage(Model model) {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		User user = userService.findByUsername(userDetails.getUsername());
-		model.addAttribute("user", user);
-		return "lecturer/homeLecturer";
-	}
+    @RequestMapping("/lecturer/")
+    public String studentHomePage(Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.findByUsername(userDetails.getUsername());
+        model.addAttribute("user", user);
+        return "lecturer/homeLecturer";
+    }
 
-	@RequestMapping(value = "/lecturer/subject/{idSubject}")
-	public String showContest(Model model, @PathVariable(name = "idSubject") Integer idSubject) {
+    @RequestMapping(value = "/lecturer/subject/{idSubject}")
+    public String showContest(Model model, @PathVariable(name = "idSubject") Integer idSubject) {
 
-		Subject subject = subjectService.findByIdSubject(idSubject);
-		model.addAttribute("subject", subject);
-		model.addAttribute("subjectScore", scoreService.findBySubject(subject));
+        Subject subject = subjectService.findByIdSubject(idSubject);
+        model.addAttribute("subject", subject);
+        model.addAttribute("subjectScore", scoreService.findBySubject(subject));
 
-		
-		if (ReadFileException.getMsgError() != "") {
-			model.addAttribute("status", new ReadFileException().getMessage());
-			ReadFileException.setMsgError("");
-		}
+        if (ReadFileException.getMsgError() != "") {
+            model.addAttribute("status", new ReadFileException().getMessage());
+            ReadFileException.setMsgError("");
+        }
 
-		return "lecturer/subject";
-	}
+        return "lecturer/subject";
+    }
 
-	@RequestMapping(value = "/lecturer/subject/{idSubject}/upload/{cotDiem}")
-	public String readFileExcel(@PathVariable(name = "idSubject") Integer idSubject,
-			@PathVariable(name = "cotDiem") String cotDiem, @RequestParam(name = "fileExcel") MultipartFile fileExcel) {
+    @RequestMapping(value = "/lecturer/subject/{idSubject}/upload/{cotDiem}")
+    public String readFileExcel(@PathVariable(name = "idSubject") Integer idSubject,
+            @PathVariable(name = "cotDiem") String cotDiem, @RequestParam(name = "fileExcel") MultipartFile fileExcel) {
 
-		List<TableScore> lisTableScores = null;
-		try {
-			lisTableScores = new ArrayList<>();
-			lisTableScores = subjectService.fileHandler(fileExcel);
-		} catch (ReadFileException ex) {
-			return "redirect:/lecturer/subject/{idSubject}";
-		}
+        List<TableScore> lisTableScores = null;
+        try {
+            lisTableScores = new ArrayList<>();
+            lisTableScores = subjectService.fileHandler(fileExcel);
+        } catch (ReadFileException ex) {
+            return "redirect:/lecturer/subject/{idSubject}";
+        }
 
-		// file excel khong bi loi
-		// xu li file
-		if (lisTableScores != null) {
-			subjectService.readData(lisTableScores, idSubject, cotDiem);
-			
-			// xu li them cac G xong tu file excel thi ta phai update cac LO ngay sau do
-			userLearningOutcomeService.updateLearningOutcome(lisTableScores);
-			
-		}
+        // file excel khong bi loi
+        // xu li file
+//        if (lisTableScores != null) {
+//            subjectService.readData(lisTableScores, idSubject, cotDiem);
+//            
+//        }
+        // mang ra de test - ko phải upload lai file
+        userLearningOutcomeService.updateLearningOutcome(lisTableScores, idSubject);
 
-		return "redirect:/lecturer/";
-	}
+        return "redirect:/lecturer/";
+    }
 
 }

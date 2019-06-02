@@ -42,7 +42,8 @@ public class User implements Serializable {
     private Date ngaySinh;
 
     @ManyToMany()
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "id_user"), inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "id_role"))
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "id_user"), 
+    	inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "id_role"))
     private List<Role> roleList;
 
     @ManyToMany

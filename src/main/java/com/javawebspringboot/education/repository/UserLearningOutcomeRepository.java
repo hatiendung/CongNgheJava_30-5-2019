@@ -14,4 +14,5 @@ import com.javawebspringboot.education.model.UserLearningOutcome;
 @Transactional
 public interface UserLearningOutcomeRepository extends JpaRepository<UserLearningOutcome, Integer>{
 	List<UserLearningOutcome> findByUser(User user);
+        
 }

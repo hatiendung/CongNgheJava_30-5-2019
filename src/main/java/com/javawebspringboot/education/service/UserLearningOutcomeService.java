@@ -10,6 +10,7 @@ public interface UserLearningOutcomeService {
 
 	
 	List<UserLearningOutcome> findByUser(User user);
+        
+        void updateLearningOutcome(List<TableScore> tableScores, Integer idSubject);
 	
-	void updateLearningOutcome(List<TableScore> lisTableScores);
 }
