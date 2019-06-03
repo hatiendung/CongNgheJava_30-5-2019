@@ -58,14 +58,18 @@ public class UserLearningOutcomeServiceImpl implements UserLearningOutcomeServic
 
 			// lay tat ca cac LearningOutcome
 			for (LearningOutcome learningOutcome : learningOutcomeList) {
-
 				List<CoursesGoal> coursesGoalsList = learningOutcome.getCoursesGoalsList();
 				// lay tung CoursesGoal thuoc LearningOutcome
 				for (CoursesGoal coursesGoal : coursesGoalsList) {
+					System.out.println("G NGOAI " + coursesGoal.getSign() + " id " + coursesGoal.getIdCoursesGoal());
 					for (UserSubjectCoursesGoal userSubjectCoursesGoal : userSubjectCoursesGoalList) {
+						System.out.println("abc d " + userSubjectCoursesGoal.getCoursesgoal().getIdCoursesGoal());
+
 						// neu mon hoc doc du lieu co chua G nam trong LO thi...
-						if (coursesGoal.equals(userSubjectCoursesGoal.getCoursesgoal())) {
-							System.out.println(coursesGoal.getSign());
+						if (coursesGoal.getIdCoursesGoal()
+								.equals(userSubjectCoursesGoal.getCoursesgoal().getIdCoursesGoal())) {
+							System.out.println("G TRONG " + coursesGoal.getSign() + " id "
+									+ userSubjectCoursesGoal.getCoursesgoal().getIdCoursesGoal());
 							// mon hoc vua doc tu file excel co chua G
 							// G nay dung de cap nhat gia tri cho LO
 							// dua vao bang UserLearningOutcome
@@ -94,7 +98,7 @@ public class UserLearningOutcomeServiceImpl implements UserLearningOutcomeServic
 									}
 									UserLearningOutcome newUserLearningOutcome = new UserLearningOutcome(student,
 											learningOutcome, phanTramL, evaluate);
-									
+
 									userLearningOutcomeRepository.save(newUserLearningOutcome);
 								}
 							}

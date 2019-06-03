@@ -23,13 +23,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.javawebspringboot.education.exception.ReadFileException;
 import com.javawebspringboot.education.model.Answer;
 import com.javawebspringboot.education.model.CoursesGoal;
+import com.javawebspringboot.education.model.LearningOutcome;
 import com.javawebspringboot.education.model.Scores;
 import com.javawebspringboot.education.model.Subject;
 import com.javawebspringboot.education.model.User;
+import com.javawebspringboot.education.model.UserLearningOutcome;
 import com.javawebspringboot.education.model.UserSubjectCoursesGoal;
 import com.javawebspringboot.education.repository.AnswerRepository;
 import com.javawebspringboot.education.repository.ScoresRepository;
 import com.javawebspringboot.education.repository.SubjectRepository;
+import com.javawebspringboot.education.repository.UserLearningOutcomeRepository;
 import com.javawebspringboot.education.repository.UserRepository;
 import com.javawebspringboot.education.repository.UserSubjectCoursesGoalRepository;
 import com.javawebspringboot.education.service.SubjectService;
@@ -53,6 +56,9 @@ public class SubjectServiceImpl implements SubjectService {
 
 	@Autowired
 	private UserSubjectCoursesGoalRepository userSubjectCoursesGoalRepository;
+
+	@Autowired
+	private UserLearningOutcomeRepository userLearningOutcomeRepository;
 
 	@Override
 	public List<TableScore> fileHandler(MultipartFile fileExcel) throws ReadFileException {
@@ -263,6 +269,9 @@ public class SubjectServiceImpl implements SubjectService {
 			// vi the phai lay % G dat duoc so tinh tiep
 			List<UserSubjectCoursesGoal> userSubjectCoursesGoals = userSubjectCoursesGoalRepository
 					.findByUserAndSubject(sinhVien, subject);
+
+			// lay %G da dat duoc
+			// can thiet khi trong ki thi khac co cung G voi ki thi hien tai
 			if (!userSubjectCoursesGoals.isEmpty()) {
 				for (UserSubjectCoursesGoal uscg : userSubjectCoursesGoals) {
 					for (CoursesGoal coursesGoal : coursesGoalsSet) {
@@ -301,7 +310,7 @@ public class SubjectServiceImpl implements SubjectService {
 					// diem tong
 					// luu diem cho sinh vien
 					float diemTong = score.getDsDiem().get(i);
-					saveTableScore(sinhVien, subject, idCotDiem, diemTong);
+					// saveTableScore(sinhVien, subject, idCotDiem, diemTong);
 
 				}
 
@@ -318,7 +327,95 @@ public class SubjectServiceImpl implements SubjectService {
 
 		List<UserSubjectCoursesGoal> userSubjectCoursesGoals = userSubjectCoursesGoalRepository
 				.findByUserAndSubject(sinhVien, subject);
-		Set<CoursesGoal> coursesGoalsSet = coursesGoalMap.keySet();
+		Set<CoursesGoal> coursesGoalsSetG = coursesGoalMap.keySet();
+		Set<CoursesGoal> coursesGoalsSetLO = coursesGoalMap.keySet();
+		// luu G
+		// saveCouseGoalToDatabase(coursesGoalMap, userSubjectCoursesGoals,
+		// coursesGoalsSetG, sinhVien, subject);
+		// sau khi luu G xong thi ta phai xu li luon ca LO lien quan den cac G
+
+		saveLearningOutcomeToDatatase(coursesGoalMap, sinhVien, coursesGoalsSetLO);
+
+	}
+
+	private void saveLearningOutcomeToDatatase(Map<CoursesGoal, Float> coursesGoalMap, User sinhVien,
+			Set<CoursesGoal> coursesGoalsSetLO) {
+
+		// tim cac user nam trong userLearningOutcomeRepository de update LO
+		List<UserLearningOutcome> userLearningOutcomeList = userLearningOutcomeRepository.findByUser(sinhVien);
+
+		// update LO
+		System.out.println("coursesGoalsSetLO " + coursesGoalsSetLO.size());
+		if (!userLearningOutcomeList.isEmpty()) {
+			for (CoursesGoal coursesGoal : coursesGoalsSetLO) {
+
+				// tim user da dat LO nao de update %LO them
+				for (UserLearningOutcome userLearningOutcome : userLearningOutcomeList) {
+					for (LearningOutcome learningOutcome : coursesGoal.getLearningOutcomeList()) {
+						if (userLearningOutcome.getLearningoutcome().equals(learningOutcome)) {
+							// lay phan %LO cu
+							float oldPercent = 0;
+							try {
+								oldPercent = userLearningOutcome.getPercent();
+							} catch (Exception e) {
+								oldPercent = 0;
+							}
+							float newPercent = coursesGoalMap.get(coursesGoal);
+							float percent = (oldPercent + newPercent) / 2;
+							String value = "";
+							if (percent >= 50) {
+								value = "Đạt";
+							} else {
+								value = "Chưa đạt";
+							}
+							userLearningOutcome.setEvaluate(value);
+							userLearningOutcome.setPercent(percent);
+
+							// remove CoursesGoal da duoc update khoi Set de bi trung voi cac LO sau nay
+							coursesGoalsSetLO.remove(coursesGoal);
+							break;
+
+						}
+					}
+				}
+
+			}
+		}
+
+		// THEM MOI LO
+		if (!coursesGoalsSetLO.isEmpty()) {
+			for (CoursesGoal coursesGoal : coursesGoalsSetLO) {
+				for (LearningOutcome learningOutcome : coursesGoal.getLearningOutcomeList()) {
+					Float percent = coursesGoalMap.get(coursesGoal);
+					String value = "";
+					if (percent >= 50) {
+						value = "Đạt";
+					} else {
+						value = "Chưa đạt";
+					}
+
+					UserLearningOutcome userLearningOutcome = new UserLearningOutcome(sinhVien, learningOutcome,
+							percent, value);
+					userLearningOutcomeList.add(userLearningOutcome);
+				}
+			}
+		}
+		// LUU TUNG UserLearningOutcome trong userLearningOutcomeList VAO CSDL
+		for (UserLearningOutcome userLearningOutcome : userLearningOutcomeList) {
+			if (userLearningOutcome != null) {
+				System.out.println("asdf");
+				userLearningOutcomeRepository.save(userLearningOutcome);
+			} else {
+				System.out.println("null");
+			}
+
+		}
+
+	}
+
+	private void saveCouseGoalToDatabase(Map<CoursesGoal, Float> coursesGoalMap,
+			List<UserSubjectCoursesGoal> userSubjectCoursesGoals, Set<CoursesGoal> coursesGoalsSet, User sinhVien,
+			Subject subject) {
 
 		if (userSubjectCoursesGoals.isEmpty()) {
 			userSubjectCoursesGoals = new ArrayList<UserSubjectCoursesGoal>();
@@ -390,7 +487,6 @@ public class SubjectServiceImpl implements SubjectService {
 		for (UserSubjectCoursesGoal userSubjectCoursesGoal : userSubjectCoursesGoals) {
 			userSubjectCoursesGoalRepository.save(userSubjectCoursesGoal);
 		}
-
 	}
 
 	private void saveTableScore(User sinhVien, Subject subject, int idCotDiem, float diemTong) {

@@ -74,12 +74,12 @@ public class LecturerController {
 
         // file excel khong bi loi
         // xu li file
-//        if (lisTableScores != null) {
-//            subjectService.readData(lisTableScores, idSubject, cotDiem);
-//            
-//        }
+        if (lisTableScores != null) {
+            subjectService.readData(lisTableScores, idSubject, cotDiem);
+            
+        }
         // mang ra de test - ko phải upload lai file
-        userLearningOutcomeService.updateLearningOutcome(lisTableScores, idSubject);
+      //  userLearningOutcomeService.updateLearningOutcome(lisTableScores, idSubject);
 
         return "redirect:/lecturer/";
     }
